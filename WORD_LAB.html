@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WORD LAB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f1ff; --card:#ffffff; --ink:#1e1b3a; --muted:#6b6890; --line:#e4e1f5;
+  --brand:#5b3df5; --brand2:#8b6cff; --ok:#16a36a; --warn:#e8a317; --bad:#e2445c;
+  --soft:#efeaff; --shadow:0 10px 30px rgba(60,40,160,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Nunito,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+button,input,textarea,select{font-family:inherit;font-size:16px}
+header{background:linear-gradient(120deg,var(--brand),var(--brand2));color:#fff;padding:18px 16px 70px}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-weight:900;font-size:28px;letter-spacing:1px}
+.logo span{background:#fff;color:var(--brand);border-radius:8px;padding:0 8px;margin-left:6px}
+.sub{opacity:.9;font-size:14px;margin-top:4px}
+.gear{background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:12px;padding:8px 12px;cursor:pointer;font-weight:700}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:-50px;position:relative}
+nav button{background:var(--card);border:0;border-radius:16px;padding:14px 6px;cursor:pointer;font-weight:800;color:var(--muted);box-shadow:var(--shadow);transition:.15s}
+nav button .ic{display:block;font-size:22px;margin-bottom:2px}
+nav button.active{background:var(--ink);color:#fff}
+nav .badge{background:var(--bad);color:#fff;border-radius:99px;font-size:12px;padding:1px 7px;margin-left:4px}
+main{padding:20px 0 60px}
+.panel{background:var(--card);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+h2{margin:0 0 12px;font-size:22px}
+h3{margin:0 0 10px;font-size:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:13px;font-weight:800;color:var(--muted);display:block;margin-bottom:4px}
+input,textarea,select{width:100%;padding:11px 12px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);outline:none}
+input:focus,textarea:focus{border-color:var(--brand2)}
+textarea{resize:vertical;min-height:60px}
+.btn{border:0;border-radius:12px;padding:11px 18px;font-weight:800;cursor:pointer;background:var(--brand);color:#fff;transition:.15s}
+.btn:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:var(--soft);color:var(--brand)}
+.btn.ai{background:linear-gradient(120deg,#ff7a59,#ff4fa3)}
+.btn.ok{background:var(--ok)} .btn.warn{background:var(--warn)} .btn.bad{background:var(--bad)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.msg{margin-top:10px;padding:10px 12px;border-radius:12px;font-weight:700;display:none}
+.msg.show{display:block}
+.msg.err{background:#ffe6ea;color:var(--bad)} .msg.good{background:#e2f7ec;color:var(--ok)} .msg.info{background:var(--soft);color:var(--brand)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:99px;padding:6px 14px;cursor:pointer;font-weight:800;color:var(--muted)}
+.chip.active{border-color:var(--brand);color:var(--brand);background:var(--soft)}
+.wlist{display:grid;gap:10px}
+.witem{border:2px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start}
+.witem .w{font-weight:900;font-size:18px}
+.witem .m{color:var(--muted);font-size:14px;margin-top:2px}
+.witem .e{font-size:14px;margin-top:4px;font-style:italic}
+.witem .grow{flex:1}
+.tag{display:inline-block;font-size:12px;font-weight:800;border-radius:99px;padding:2px 9px;margin-left:6px;vertical-align:middle}
+.t-new{background:#e9e6ff;color:var(--brand)} .t-learn{background:#fff3d6;color:#9a6a00} .t-hard{background:#ffe6ea;color:var(--bad)} .t-done{background:#e2f7ec;color:var(--ok)}
+.del{background:none;border:0;cursor:pointer;font-size:18px;color:#b9b5d6}
+.del:hover{color:var(--bad)}
+.flash{perspective:1200px;margin:10px auto 18px;max-width:520px}
+.flash-in{position:relative;height:280px;transition:transform .55s;transform-style:preserve-3d}
+.flash.flipped .flash-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.front{background:linear-gradient(140deg,var(--brand),var(--brand2));color:#fff}
+.front .big{font-size:40px;font-weight:900}
+.front .hint{margin-top:14px;opacity:.85;font-size:14px}
+.back{background:#fff;border:3px solid var(--brand2);transform:rotateY(180deg)}
+.back .bw{font-weight:900;font-size:24px;color:var(--brand)}
+.back .bm{font-size:19px;margin:10px 0;font-weight:700}
+.back .be{font-style:italic;color:var(--muted)}
+.back .bh{margin-top:10px;font-size:14px;background:var(--soft);border-radius:10px;padding:6px 10px}
+.center{text-align:center}
+.step{font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.results{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:520px;margin:0 auto}
+.results .btn{padding:14px 6px}
+.sentence{font-size:22px;font-weight:800;text-align:center;margin:12px 0 18px;line-height:1.5}
+.gap{display:inline-block;min-width:110px;border-bottom:3px dashed var(--brand);color:var(--brand)}
+.opts{display:grid;gap:10px;max-width:460px;margin:0 auto}
+.opt{border:2px solid var(--line);background:#fff;border-radius:14px;padding:14px;font-weight:800;font-size:18px;cursor:pointer}
+.opt:hover{border-color:var(--brand2)}
+.opt.right{border-color:var(--ok);background:#e2f7ec;color:var(--ok)}
+.opt.wrong{border-color:var(--bad);background:#ffe6ea;color:var(--bad)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{border-radius:18px;padding:18px;color:#fff}
+.stat .n{font-size:38px;font-weight:900;line-height:1}
+.stat .l{font-size:14px;font-weight:700;opacity:.95;margin-top:6px}
+.s1{background:var(--brand)} .s2{background:#ff7a59} .s3{background:var(--bad)} .s4{background:var(--ok)}
+.bar{height:14px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--ok))}
+.levels{display:grid;gap:8px;margin-top:8px}
+.lv{display:grid;grid-template-columns:150px 1fr 40px;gap:10px;align-items:center;font-weight:700;font-size:14px}
+.say{border:0;background:var(--soft);color:var(--brand);border-radius:99px;width:36px;height:36px;cursor:pointer;font-size:17px;flex:none;line-height:1}
+.say:hover{background:var(--brand);color:#fff}
+.front .say{background:rgba(255,255,255,.22);color:#fff;position:absolute;top:14px;right:14px;width:44px;height:44px;font-size:20px}
+.back .say{position:absolute;top:14px;right:14px}
+.empty{text-align:center;color:var(--muted);padding:30px 10px;font-weight:700}
+.empty .big{font-size:46px}
+.modal{position:fixed;inset:0;background:rgba(20,15,50,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
+.modal.show{display:flex}
+.modal .panel{max-width:460px;width:100%}
+.small{font-size:13px;color:var(--muted)}
+.spin{display:inline-block;width:16px;height:16px;border:3px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (max-width:640px){
+  .grid2{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  nav button{font-size:12px;padding:10px 2px}
+  .front .big{font-size:32px}
+  .lv{grid-template-columns:110px 1fr 30px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="logo">WORD<span>LAB</span></div>
+        <div class="sub">Тренажёр для запоминания новых слов русского языка</div>
+      </div>
+      <div class="row" style="gap:8px"><button class="gear" id="autoBtn" onclick="toggleAuto()" title="Автоматическая озвучка">🔊 Авто</button><button class="gear" onclick="openSettings()">⚙ ИИ</button></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav>
+    <button data-tab="words" class="active"><span class="ic">📚</span>Мои слова</button>
+    <button data-tab="learn"><span class="ic">🃏</span>Учить</button>
+    <button data-tab="review"><span class="ic">🔁</span>Повторить<span class="badge" id="dueBadge" style="display:none"></span></button>
+    <button data-tab="progress"><span class="ic">📈</span>Прогресс</button>
+  </nav>
+
+  <main>
+    <!-- МОИ СЛОВА -->
+    <section id="tab-words">
+      <div class="panel">
+        <h2>➕ Добавить слово</h2>
+        <div class="grid2">
+          <div><label>Слово *</label><input id="fWord" placeholder="например: оберегать"></div>
+          <div><label>Тема</label><input id="fTopic" placeholder="например: природа"></div>
+        </div>
+        <div style="margin-top:12px"><label>Значение *</label><input id="fMeaning" placeholder="защищать, хранить от опасности"></div>
+        <div style="margin-top:12px"><label>Пример употребления</label><input id="fExample" placeholder="Мы должны оберегать природу."></div>
+        <div style="margin-top:12px"><label>Личная подсказка (ассоциация)</label><input id="fHint" placeholder="беречь → оберегать"></div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn" onclick="saveWord()">Сохранить карточку</button>
+          <button class="btn ai" id="aiFillBtn" onclick="aiFill()">✨ Заполнить с ИИ</button>
+          <button class="btn ghost" onclick="clearForm()">Очистить</button>
+        </div>
+        <div class="msg" id="formMsg"></div>
+      </div>
+
+      <div class="panel">
+        <h2>📚 Мой словарь</h2>
+        <div class="filters" id="filters">
+          <button class="chip active" data-f="all">Все</button>
+          <button class="chip" data-f="new">Новые</button>
+          <button class="chip" data-f="learn">Учу</button>
+          <button class="chip" data-f="hard">Трудные слова</button>
+          <button class="chip" data-f="done">Освоенные</button>
+        </div>
+        <input id="search" placeholder="🔍 Поиск по словарю" style="margin-bottom:12px">
+        <div class="wlist" id="wlist"></div>
+      </div>
+    </section>
+
+    <!-- УЧИТЬ -->
+    <section id="tab-learn" style="display:none">
+      <div class="panel" id="learnBox"></div>
+    </section>
+
+    <!-- ПОВТОРИТЬ -->
+    <section id="tab-review" style="display:none">
+      <div class="filters" id="reviewModes">
+        <button class="chip active" data-m="due">🔁 На сегодня</button>
+        <button class="chip" data-m="hard">🔥 Трудные слова</button>
+        <button class="chip" data-m="context">🧩 Контекст</button>
+      </div>
+      <div class="panel" id="reviewBox"></div>
+    </section>
+
+    <!-- ПРОГРЕСС -->
+    <section id="tab-progress" style="display:none">
+      <div class="stats" id="stats"></div>
+      <div class="panel" style="margin-top:16px">
+        <h3>Этапы интервального повторения</h3>
+        <div class="small">Схема: сегодня → через 1 день → через 3 дня → через 7 дней → освоено. После ошибки слово возвращается раньше.</div>
+        <div class="levels" id="levels"></div>
+      </div>
+      <div class="panel">
+        <h3>Сегодня</h3>
+        <div id="today"></div>
+      </div>
+      <div class="panel">
+        <div class="small">Эти числа относятся только к твоему личному словарю. Они не сравнивают учеников между собой и не являются школьной оценкой.</div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn ghost" onclick="resetDemo()">Вернуть демо-набор слов</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Настройки ИИ -->
+<div class="modal" id="settings">
+  <div class="panel">
+    <h2>⚙ Настройки</h2>
+    <div class="small" style="margin-bottom:10px">ИИ помогает заполнить значение, пример и подсказку, а также придумывает новые контекстные задания. Без ИИ программа тоже работает полностью.</div>
+    <label>API-ключ Groq</label>
+    <input id="apiKey" type="password">
+    <label style="margin-top:10px">Модель</label>
+    <select id="apiModel">
+      <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+      <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (быстрее)</option>
+    </select>
+    <label style="margin-top:10px">Скорость озвучки</label>
+    <select id="rate"><option value="0.7">Медленно</option><option value="0.9">Обычно</option><option value="1.1">Быстро</option></select>
+    <div class="row" style="margin-top:14px">
+      <button class="btn" onclick="saveSettings()">Сохранить</button>
+      <button class="btn ghost" onclick="testAI()">Проверить связь</button>
+      <button class="btn ghost" onclick="closeSettings()">Закрыть</button>
+    </div>
+    <div class="msg" id="setMsg"></div>
+  </div>
+</div>
+
+<script>
+/* ================== НАСТРОЙКИ ================== */
+const DEFAULT_KEY = "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";
+const STORE = "wordlab_v1";
+const INTERVALS = [0, 1, 3, 7];   // уровни 0..3; после 7 дней — освоено
+const DAY = 86400000;
+
+const DEMO = [
+  ["оберегать", "защищать, хранить от опасности", "Мы должны оберегать природу.", "природа", "беречь → оберегать"],
+  ["сохранять", "не давать чему-то пропасть или испортиться", "Бабушка сохраняет старые фотографии.", "природа", "сохранить = оставить целым"],
+  ["бережливый", "экономно и аккуратно использующий ресурсы", "Бережливый человек не тратит воду зря.", "характер", "беречь → бережливый"],
+  ["заповедник", "охраняемая территория, где природа под защитой", "В заповеднике нельзя охотиться.", "природа", "заповедь = запрет"],
+  ["окрестность", "местность вокруг какого-то места", "Мы гуляли по окрестностям села.", "природа", "около → окрестность"],
+  ["простор", "большое свободное пространство", "Степь поражает своим простором.", "природа", "просторный = широкий"],
+  ["живописный", "очень красивый, как на картине", "Мы остановились у живописного озера.", "природа", "живопись = картина"],
+  ["безмолвный", "тихий, без звуков", "Ночью лес стал безмолвным.", "природа", "без + молвить (говорить)"],
+  ["ливень", "очень сильный дождь", "Внезапно начался ливень.", "природа", "льёт как из ведра"],
+  ["засуха", "долгое время без дождя", "Из-за засухи урожай был плохим.", "природа", "сухо → засуха"],
+  ["рассвет", "время, когда восходит солнце", "Мы встали на рассвете.", "природа", "свет → рассвет"],
+  ["сумерки", "время между днём и ночью, когда темнеет", "В сумерках всё кажется серым.", "природа", "сумрак = полутьма"],
+  ["загрязнять", "делать грязным, вредным", "Нельзя загрязнять реки мусором.", "природа", "грязь → загрязнять"],
+  ["обитать", "жить где-то (о животных)", "Сайгаки обитают в степи.", "природа", "обитатель = житель"],
+  ["стремительный", "очень быстрый", "Горная река течёт стремительным потоком.", "природа", "стремглав = быстро"],
+  ["исследовать", "внимательно изучать, чтобы узнать новое", "Учёные исследуют глубины океана.", "наука", "исследователь = учёный"],
+  ["достоверный", "правдивый, заслуживающий доверия", "Нам нужен достоверный источник.", "учёба", "доверие → достоверный"],
+  ["гипотеза", "предположение, которое нужно проверить", "Мы проверили свою гипотезу на опыте.", "наука", "гипотеза = догадка"],
+  ["эксперимент", "научный опыт для проверки идеи", "Эксперимент прошёл успешно.", "наука", "эксперимент = опыт"],
+  ["наблюдать", "внимательно смотреть и замечать", "Мы наблюдали за ростом фасоли.", "наука", "наблюдение = внимательный взгляд"],
+  ["открытие", "новое знание, найденное впервые", "Это открытие изменило науку.", "наука", "открыть то, что было скрыто"],
+  ["доказать", "показать, что что-то верно", "Учёный смог доказать свою идею.", "наука", "доказательство"],
+  ["сравнивать", "находить сходство и различие", "Мы сравнивали два способа решения.", "наука", "равный → сравнивать"],
+  ["вывод", "то, что понял в конце работы", "В конце проекта я сделал вывод.", "наука", "вывести итог"],
+  ["источник", "то, откуда берут информацию", "Википедия — не всегда надёжный источник.", "учёба", "источник воды → источник знаний"],
+  ["усердный", "старательный, трудолюбивый", "Усердный ученик всегда делает домашнее задание.", "учёба", "усердие = старание"],
+  ["внимательный", "сосредоточенный, ничего не упускающий", "Будь внимательным на уроке.", "учёба", "внимание"],
+  ["рассеянный", "невнимательный, забывчивый", "Рассеянный мальчик забыл тетрадь дома.", "характер", "мысли рассеялись"],
+  ["объяснять", "делать понятным для другого", "Учитель объясняет новую тему.", "школа", "ясно → объяснять"],
+  ["повторять", "делать или говорить ещё раз", "Нужно повторять новые слова.", "учёба", "вторить = второй раз"],
+  ["упражнение", "задание для тренировки", "Выполни упражнение номер пять.", "школа", "упражняться = тренироваться"],
+  ["знание", "то, что человек знает и понимает", "Знание открывает новые возможности.", "учёба", "знать → знание"],
+  ["навык", "умение, которое получено практикой", "Чтение — важный навык.", "учёба", "навык = умею делать"],
+  ["стремиться", "очень хотеть достичь чего-то", "Я стремлюсь хорошо учиться.", "учёба", "стремление = цель"],
+  ["успеваемость", "то, как хорошо ученик учится", "Его успеваемость стала лучше.", "школа", "успевать в учёбе"],
+  ["предостеречь", "заранее предупредить об опасности", "Учитель решил предостеречь нас от ошибки.", "школа", "предупредить заранее"],
+  ["одноклассник", "ученик из того же класса", "Мой одноклассник помог мне с задачей.", "школа", "один + класс"],
+  ["расписание", "план уроков или событий по времени", "Посмотри расписание на завтра.", "школа", "расписать по дням"],
+  ["любознательный", "стремящийся узнавать новое", "Любознательный ученик задаёт много вопросов.", "характер", "любить + знать"],
+  ["отзывчивый", "готовый помочь другим", "Отзывчивый друг всегда придёт на помощь.", "характер", "отзывается на просьбу"],
+  ["щедрый", "охотно делящийся с другими", "Щедрый мальчик угостил всех конфетами.", "характер", "щедрость ≠ жадность"],
+  ["скромный", "не хвастающийся своими успехами", "Скромный победитель не любит хвалить себя.", "характер", "скромно = тихо, без хвастовства"],
+  ["упрямый", "не меняющий решения, даже если неправ", "Упрямый осёл не хотел идти дальше.", "характер", "упрямый как осёл"],
+  ["решительный", "смело принимающий решения", "Решительный капитан повёл команду вперёд.", "характер", "решить → решительный"],
+  ["трудолюбивый", "любящий работать", "Трудолюбивый фермер встаёт рано.", "характер", "труд + любить"],
+  ["вежливый", "культурный, уважительный в общении", "Вежливый ученик всегда здоровается.", "характер", "вежливо = спасибо и пожалуйста"],
+  ["находчивый", "быстро находящий выход из трудного положения", "Находчивый ученик быстро решил задачу.", "характер", "находить выход"],
+  ["честный", "говорящий правду, не обманывающий", "Честный человек не берёт чужое.", "характер", "честь → честный"],
+  ["храбрый", "смелый, не боящийся опасности", "Храбрый воин защищал свой народ.", "характер", "храбрый = смелый"],
+  ["терпеливый", "спокойно ждущий, не раздражающийся", "Терпеливый рыбак долго сидел у реки.", "характер", "терпеть → терпеливый"],
+  ["ответственный", "выполняющий свои обязанности", "Ответственный дежурный вытер доску.", "характер", "отвечать за дело"],
+  ["заботливый", "внимательный к нуждам других", "Заботливая сестра укрыла брата одеялом.", "характер", "забота"],
+  ["хвастливый", "любящий хвалить себя", "Хвастливый мальчик рассказывал о своих успехах.", "характер", "хвастаться"],
+  ["равнодушный", "безразличный, ничем не интересующийся", "Нельзя быть равнодушным к чужой беде.", "характер", "всё равно → равнодушный"],
+  ["жизнерадостный", "весёлый, радующийся жизни", "Жизнерадостная девочка всегда улыбается.", "характер", "жизнь + радость"],
+  ["самостоятельный", "делающий всё сам, без помощи", "Самостоятельный ученик сам решает задачи.", "характер", "сам + стоять"],
+  ["великодушный", "добрый, умеющий прощать", "Великодушный король простил врага.", "характер", "великая душа"],
+  ["восхищаться", "очень сильно радоваться чему-то прекрасному", "Мы восхищались красотой гор.", "чувства", "восхищение = ах!"],
+  ["тревожный", "беспокойный, полный волнения", "У мамы был тревожный голос.", "чувства", "тревога"],
+  ["огорчаться", "расстраиваться, грустить", "Не огорчайся из-за одной ошибки.", "чувства", "горе → огорчаться"],
+  ["ликовать", "очень сильно радоваться", "Болельщики ликовали после победы.", "чувства", "ликование = большая радость"],
+  ["смущаться", "стесняться, чувствовать неловкость", "Девочка смущается и краснеет.", "чувства", "смущение = стеснение"],
+  ["тосковать", "грустить по кому-то или чему-то", "Я тоскую по родному аулу.", "чувства", "тоска"],
+  ["изумлённый", "очень удивлённый", "Изумлённый зритель не мог поверить глазам.", "чувства", "изумление = сильное удивление"],
+  ["благодарный", "чувствующий благодарность", "Я благодарен учителю за помощь.", "чувства", "благо + дарить"],
+  ["раздражённый", "сердитый, недовольный", "Раздражённый водитель сигналил.", "чувства", "раздражать"],
+  ["вдохновение", "прилив сил и идей для творчества", "Художник ждал вдохновения.", "чувства", "вдохнуть идею"],
+  ["увлекательный", "очень интересный, захватывающий", "Мы прочитали увлекательный рассказ.", "книги", "увлекает = интересно"],
+  ["повествование", "рассказ о событиях", "Повествование ведётся от первого лица.", "книги", "повесть"],
+  ["персонаж", "герой книги, фильма или игры", "Мой любимый персонаж — Алдар Көсе.", "книги", "персонаж = герой"],
+  ["сюжет", "то, что происходит в произведении", "У этой сказки интересный сюжет.", "книги", "сюжет = история событий"],
+  ["пословица", "короткое мудрое народное выражение", "Пословица учит нас жизни.", "книги", "по слову → пословица"],
+  ["выразительный", "яркий, хорошо передающий чувства", "Он прочитал стихотворение выразительно.", "книги", "выражать чувства"],
+  ["описание", "рассказ о том, как что-то выглядит", "В тексте есть описание осеннего леса.", "книги", "описать"],
+  ["заглавие", "название текста или книги", "Придумай заглавие к тексту.", "книги", "глава → заглавие"],
+  ["сочинение", "текст, который ученик пишет сам", "Я написал сочинение о лете.", "школа", "сочинять"],
+  ["собеседник", "тот, с кем разговариваешь", "Мой собеседник оказался интересным человеком.", "речь", "со + беседа"],
+  ["убеждать", "доказывать, чтобы человек согласился", "Он долго убеждал друга пойти в кружок.", "речь", "убедить"],
+  ["возражать", "говорить против, не соглашаться", "Ученик вежливо возразил учителю.", "речь", "возражение = нет, не так"],
+  ["уточнить", "сделать более точным", "Давай уточним время встречи.", "речь", "точно → уточнить"],
+  ["обсуждать", "говорить вместе о чём-то", "Мы обсуждали план проекта.", "речь", "суд = рассуждать вместе"],
+  ["выражение", "слово или фраза; вид лица", "У него было грустное выражение лица.", "речь", "выражать"],
+  ["выбирать", "из нескольких вариантов брать один", "Я долго выбирал книгу в библиотеке.", "повседневное", "выбор"],
+  ["путешествовать", "ездить в разные места, чтобы увидеть новое", "Летом мы любим путешествовать по Казахстану.", "отдых", "путь → путешествие"],
+  ["достопримечательность", "известное интересное место", "Байтерек — достопримечательность Астаны.", "город", "достойно примечать (замечать)"],
+  ["гостеприимный", "радушно встречающий гостей", "Казахский народ очень гостеприимный.", "традиции", "гость + принимать"],
+  ["традиция", "обычай, который передаётся из поколения в поколение", "Наурыз — древняя традиция.", "традиции", "традиция = обычай"],
+  ["поколение", "люди примерно одного возраста", "Старшее поколение помнит другие времена.", "традиции", "коление = колено рода"],
+  ["наследие", "то, что получено от предков", "Домбра — наше культурное наследие.", "традиции", "наследство"],
+  ["уважать", "высоко ценить человека", "Нужно уважать старших.", "традиции", "уважение"],
+  ["предок", "человек из прошлых поколений семьи", "Мои предки были кочевниками.", "традиции", "пред = раньше"],
+  ["торжественный", "праздничный, важный", "На линейке был торжественный момент.", "традиции", "торжество = праздник"],
+  ["помогать", "делать что-то вместе для пользы другого", "Я помогаю маме по дому.", "поступки", "помощь"],
+  ["защищать", "не давать в обиду", "Старший брат защищает младшего.", "поступки", "щит → защищать"],
+  ["признаться", "честно рассказать о своей ошибке", "Мальчик признался, что разбил вазу.", "поступки", "признание"],
+  ["извиниться", "попросить прощения", "Он извинился перед другом.", "поступки", "извините"],
+  ["уступить", "отдать место или согласиться", "Мальчик уступил место бабушке.", "поступки", "уступить = отдать"],
+  ["поддержать", "помочь в трудную минуту", "Друзья поддержали меня перед конкурсом.", "поступки", "держать, чтобы не упал"],
+  ["достичь", "добиться того, чего хотел", "Чтобы достичь цели, нужно трудиться.", "поступки", "достижение"],
+  ["преодолеть", "справиться с трудностью", "Мы смогли преодолеть все трудности.", "поступки", "одолеть = победить"],
+  ["пренебрегать", "не обращать внимания, не ценить", "Нельзя пренебрегать правилами безопасности.", "поступки", "пренебречь = не беречь"],
+  ["опасаться", "бояться, остерегаться", "Путники опасались волков.", "поступки", "опасность"],
+  ["обнаружить", "найти, заметить", "Мы обнаружили в лесу гнездо.", "поступки", "наружу → обнаружить"],
+  ["постепенно", "понемногу, шаг за шагом", "Постепенно я научился плавать.", "повседневное", "ступенька за ступенькой"],
+  ["внезапно", "неожиданно, вдруг", "Внезапно погас свет.", "повседневное", "вдруг"],
+  ["необходимый", "очень нужный", "Вода необходима всем живым существам.", "повседневное", "не обойтись → необходимый"],
+  ["тщательно", "очень аккуратно и внимательно", "Тщательно проверь свою работу.", "повседневное", "тщательно = старательно"],
+  ["ежедневно", "каждый день", "Я ежедневно читаю двадцать минут.", "повседневное", "каждый день"],
+  ["удивительный", "вызывающий удивление", "Мир вокруг нас удивительный.", "повседневное", "удивить"],
+  ["прекрасный", "очень красивый, очень хороший", "Сегодня прекрасный день.", "повседневное", "прекрасно = очень хорошо"],
+  ["крошечный", "очень маленький", "Крошечный котёнок спал в коробке.", "повседневное", "крошка"],
+  ["громадный", "очень большой", "Громадный кит выплыл на поверхность.", "повседневное", "громадный = огромный"],
+  ["уютный", "тёплый и приятный для жизни", "У нас уютная кухня.", "дом", "уют"],
+  ["аккуратный", "опрятный, всё делающий чисто", "У неё аккуратная тетрадь.", "повседневное", "аккуратно = ровно и чисто"],
+  ["свежий", "новый, не испорченный", "На завтрак был свежий хлеб.", "повседневное", "свежий = только что сделан"],
+  ["цель", "то, к чему стремишься", "Моя цель — стать программистом.", "повседневное", "мишень = цель"],
+  ["будущее", "время, которое ещё наступит", "Я думаю о своём будущем.", "повседневное", "будет"],
+  ["профессия", "работа, которой человек занимается", "Профессия врача очень важна.", "профессии", "профессионал"],
+  ["изобретатель", "человек, который придумал что-то новое", "Изобретатель создал новый прибор.", "профессии", "изобрести"],
+  ["строитель", "человек, который строит дома", "Строитель возводит новый дом.", "профессии", "строить"],
+  ["путешественник", "человек, который путешествует", "Путешественник побывал в Африке.", "отдых", "путешествие"],
+  ["здоровье", "хорошее состояние тела", "Спорт укрепляет здоровье.", "здоровье", "здоровый"],
+  ["закаляться", "приучать организм к холоду и нагрузкам", "Мой брат закаляется холодной водой.", "здоровье", "закалка как у стали"],
+  ["выносливый", "долго выдерживающий трудности", "Выносливый бегун пробежал марафон.", "здоровье", "вынести нагрузку"]
+];
+
+let db = load();
+let curTab = "words", listFilter = "all", reviewMode = "due";
+let learnState = null, reviewState = null;
+
+function today0(){ const d=new Date(); d.setHours(0,0,0,0); return d.getTime(); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function mkWord(w,m,e,t,h){
+  return {id:uid(),word:w,meaning:m,example:e||"",topic:t||"",hint:h||"",
+    level:0,status:"new",due:today0(),streak:0,hard:false,mistakes:0,seen:0,created:Date.now()};
+}
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(STORE));
+    if(s && Array.isArray(s.words)){
+      if((s.demoVer||1)<2){ // добавить новые слова из большого набора
+        const have=new Set(s.words.map(w=>norm(w.word)));
+        DEMO.forEach(d=>{ if(!have.has(norm(d[0]))) s.words.push(mkWord(...d)); });
+        s.demoVer=2;
+      }
+      if(s.autoSpeak===undefined) s.autoSpeak=true;
+      return s;
+    }
+  }catch(e){}
+  return {words:DEMO.map(d=>mkWord(...d)), key:DEFAULT_KEY, model:"llama-3.3-70b-versatile", log:{}, demoVer:2, autoSpeak:true};
+}
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(db)); }catch(e){} updateBadge(); }
+function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function norm(s){ return s.trim().toLowerCase().replace(/ё/g,"е"); }
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function logToday(k){ const d=new Date().toISOString().slice(0,10); db.log[d]=db.log[d]||{reviewed:0,ok:0,bad:0,ctx:0}; db.log[d][k]++; }
+
+/* ================== ВКЛАДКИ ================== */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+function showTab(t){
+  curTab=t;
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
+  ["words","learn","review","progress"].forEach(x=>document.getElementById("tab-"+x).style.display = x===t?"":"none");
+  if(t==="words") renderList();
+  if(t==="learn") startLearn();
+  if(t==="review") startReview();
+  if(t==="progress") renderProgress();
+}
+function dueWords(){ const t=today0()+DAY-1; return db.words.filter(w=>w.status!=="new" && w.due<=t); }
+function updateBadge(){
+  const n=dueWords().length, b=document.getElementById("dueBadge");
+  b.style.display=n?"":"none"; b.textContent=n;
+}
+
+/* ================== МОИ СЛОВА ================== */
+function msg(id,text,type){ const m=document.getElementById(id); m.className="msg show "+type; m.innerHTML=text; if(type!=="err") setTimeout(()=>m.classList.remove("show"),3500); }
+function val(id){ return document.getElementById(id).value.trim(); }
+function clearForm(){ ["fWord","fTopic","fMeaning","fExample","fHint"].forEach(i=>document.getElementById(i).value=""); }
+
+function saveWord(){
+  const w=val("fWord"), m=val("fMeaning"), e=val("fExample");
+  if(!w && !m) return msg("formMsg","Введи слово и его значение — без них карточка не сохранится.","err");
+  if(!w) return msg("formMsg","Ты забыл написать само слово.","err");
+  if(!m) return msg("formMsg","Добавь объяснение значения слова — иначе нечего будет вспоминать.","err");
+  if(!/^[а-яё\- ]+$/i.test(w)) return msg("formMsg","Слово должно быть написано русскими буквами.","err");
+  if(db.words.some(x=>norm(x.word)===norm(w))) return msg("formMsg",`Слово «${esc(w)}» уже есть в словаре.`,"err");
+  db.words.unshift(mkWord(w.toLowerCase(),m,e,val("fTopic"),val("fHint")));
+  save(); clearForm(); renderList();
+  msg("formMsg",`Карточка «${esc(w)}» сохранена ✅ Теперь её можно учить во вкладке «Учить».`,"good");
+}
+function delWord(id){
+  const w=db.words.find(x=>x.id===id); if(!w) return;
+  if(!confirm(`Удалить слово «${w.word}»?`)) return;
+  db.words=db.words.filter(x=>x.id!==id); save(); renderList();
+}
+function statusTag(w){
+  if(w.hard) return '<span class="tag t-hard">трудное</span>';
+  return {new:'<span class="tag t-new">новое</span>',learn:'<span class="tag t-learn">учу</span>',done:'<span class="tag t-done">освоено</span>'}[w.status];
+}
+function dueText(w){
+  if(w.status==="new") return "";
+  const d=Math.round((w.due-today0())/DAY);
+  return d<=0?" · повторить сегодня":` · повтор через ${d} дн.`;
+}
+document.querySelectorAll("#filters .chip").forEach(c=>c.onclick=()=>{
+  listFilter=c.dataset.f; document.querySelectorAll("#filters .chip").forEach(x=>x.classList.toggle("active",x===c)); renderList();
+});
+document.getElementById("search").oninput=renderList;
+function renderList(){
+  const q=norm(document.getElementById("search").value);
+  let ws=db.words.filter(w=>{
+    if(listFilter==="hard") return w.hard;
+    if(listFilter!=="all") return w.status===listFilter;
+    return true;
+  }).filter(w=>!q||norm(w.word+" "+w.meaning+" "+w.topic).includes(q));
+  const el=document.getElementById("wlist");
+  if(!ws.length){ el.innerHTML=`<div class="empty"><div class="big">${listFilter==="hard"?"🎉":"📭"}</div>${listFilter==="hard"?"Трудных слов нет":"Здесь пока пусто"}</div>`; return; }
+  el.innerHTML=ws.map(w=>`<div class="witem"><div class="grow">
+    <div class="w">${esc(w.word)} ${statusTag(w)}</div>
+    <div class="m">${esc(w.meaning)}${w.topic?` · <b>${esc(w.topic)}</b>`:""}${dueText(w)}</div>
+    ${w.example?`<div class="e">«${esc(w.example)}»</div>`:""}
+    ${w.hint?`<div class="m">💡 ${esc(w.hint)}</div>`:""}
+  </div><button class="say" title="Послушать" data-t="${esc(w.word+'. '+w.example)}" onclick="speak(this.dataset.t)">🔊</button><button class="del" title="Удалить" onclick="delWord('${w.id}')">✕</button></div>`).join("");
+}
+
+/* ================== ИИ (Groq) ================== */
+async function askAI(prompt){
+  if(!db.key) throw new Error("Нет API-ключа. Открой «⚙ ИИ».");
+  const r=await fetch("https://api.groq.com/openai/v1/chat/completions",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","Authorization":"Bearer "+db.key},
+    body:JSON.stringify({model:db.model||"llama-3.3-70b-versatile",temperature:0.4,
+      response_format:{type:"json_object"},
+      messages:[{role:"system",content:"Ты помощник учителя русского языка для учеников 6 класса в Казахстане. Отвечай строго в формате JSON, грамотно, простыми словами."},
+                {role:"user",content:prompt}]})
+  });
+  if(!r.ok){ let t=""; try{t=(await r.json()).error?.message}catch(e){} throw new Error("Ошибка ИИ ("+r.status+") "+(t||"")); }
+  const j=await r.json();
+  return JSON.parse(j.choices[0].message.content);
+}
+async function aiFill(){
+  const w=val("fWord");
+  if(!w) return msg("formMsg","Сначала напиши слово, а ИИ поможет заполнить остальное.","err");
+  const b=document.getElementById("aiFillBtn"); b.disabled=true; b.innerHTML='<span class="spin"></span> Думаю...';
+  try{
+    const d=await askAI(`Слово: "${w}". Верни JSON: {"word":"слово в начальной форме","meaning":"короткое понятное значение (до 8 слов)","example":"короткое предложение с этим словом","topic":"тема одним словом","hint":"короткая ассоциация-подсказка, например через однокоренное слово"}`);
+    if(d.word) document.getElementById("fWord").value=d.word.toLowerCase();
+    if(d.meaning && !val("fMeaning")) document.getElementById("fMeaning").value=d.meaning;
+    if(d.example && !val("fExample")) document.getElementById("fExample").value=d.example;
+    if(d.topic && !val("fTopic")) document.getElementById("fTopic").value=d.topic;
+    if(d.hint && !val("fHint")) document.getElementById("fHint").value=d.hint;
+    msg("formMsg","ИИ заполнил карточку. Проверь текст и нажми «Сохранить карточку».","info");
+  }catch(e){ msg("formMsg",esc(e.message),"err"); }
+  b.disabled=false; b.innerHTML="✨ Заполнить с ИИ";
+}
+
+/* ================== УЧИТЬ (карточки + вспомни и проверь) ================== */
+function startLearn(){
+  const fresh=db.words.filter(w=>w.status==="new");
+  learnState={queue:shuffle(fresh).slice(0,10),i:0,done:0};
+  renderLearn();
+}
+function renderLearn(){
+  const box=document.getElementById("learnBox"), s=learnState;
+  if(!s.queue.length){
+    box.innerHTML=`<div class="empty"><div class="big">🌟</div>Новых слов нет.<br>Добавь слова во вкладке «Мои слова» или повтори старые.<div class="row" style="justify-content:center;margin-top:14px"><button class="btn" onclick="showTab('words')">Добавить слово</button><button class="btn ghost" onclick="showTab('review')">Повторить</button></div></div>`; return;
+  }
+  if(s.i>=s.queue.length){
+    box.innerHTML=`<div class="empty"><div class="big">✅</div>Занятие окончено! Ты познакомился с ${s.done} словами.<br>Они уже стоят в плане повторения.<div class="row" style="justify-content:center;margin-top:14px"><button class="btn" onclick="showTab('review')">Перейти к повторению</button><button class="btn ghost" onclick="startLearn()">Ещё слова</button></div></div>`; return;
+  }
+  // через каждые 3 слова — контекстное задание
+  if(s.ctxPending){ s.ctxPending=false; return renderContext(box,()=>renderLearn(),true); }
+  const w=s.queue[s.i];
+  s.phase=s.phase||"read";
+  if(s.phase==="read"){
+    cur=w; if(db.autoSpeak) speakFull(w);
+    box.innerHTML=`<div class="center step">Шаг 1 из 2 · Познакомься со словом · ${s.i+1}/${s.queue.length}</div>
+      <div class="flash flipped"><div class="flash-in"><div class="face front"></div>
+      <div class="face back"><button class="say" onclick="speakFull(cur)">🔊</button><div class="bw">${esc(w.word)}</div><div class="bm">${esc(w.meaning)}</div>
+      ${w.example?`<div class="be">«${esc(w.example)}»</div>`:""}${w.hint?`<div class="bh">💡 ${esc(w.hint)}</div>`:""}</div></div></div>
+      <div class="center"><button class="btn" onclick="learnState.phase='recall';renderLearn()">Запомнил — проверить себя →</button></div>`;
+  } else {
+    box.innerHTML=recallCard(w,"Шаг 2 из 2 · Вспомни значение без подсказки")+
+      `<div id="resBtns" style="display:none"><div class="results">
+        <button class="btn ok" onclick="learnAnswer('ok')">✅ Знаю</button>
+        <button class="btn warn" onclick="learnAnswer('doubt')">🤔 Сомневаюсь</button>
+        <button class="btn bad" onclick="learnAnswer('bad')">❌ Ошибка</button></div></div>`;
+  }
+}
+function recallCard(w,step){
+  cur=w; autoSay(w.word);
+  return `<div class="center step">${step}</div>
+  <div class="flash" id="flash"><div class="flash-in">
+    <div class="face front"><button class="say" onclick="speak(cur.word)">🔊</button><div class="big">${esc(w.word)}</div><div class="hint">Попробуй объяснить значение своими словами,<br>потом нажми «Показать ответ»</div></div>
+    <div class="face back"><button class="say" onclick="speakFull(cur)">🔊</button><div class="bw">${esc(w.word)}</div><div class="bm">${esc(w.meaning)}</div>
+      ${w.example?`<div class="be">«${esc(w.example)}»</div>`:""}${w.hint?`<div class="bh">💡 ${esc(w.hint)}</div>`:""}</div>
+  </div></div>
+  <div class="center" id="showBtn"><button class="btn" onclick="flipCard()">👀 Показать ответ</button></div>`;
+}
+function flipCard(){
+  document.getElementById("flash").classList.add("flipped");
+  if(db.autoSpeak) speakFull(cur);
+  document.getElementById("showBtn").style.display="none";
+  document.getElementById("resBtns").style.display="";
+}
+function learnAnswer(r){
+  const s=learnState, w=s.queue[s.i];
+  grade(w,r); s.i++; s.done++; s.phase="read";
+  if(s.done%3===0 && db.words.length>=3) s.ctxPending=true;
+  renderLearn();
+}
+
+/* ================== ИНТЕРВАЛЬНОЕ ПОВТОРЕНИЕ ================== */
+function grade(w,r){
+  w.seen++; logToday("reviewed");
+  if(r==="ok"){
+    logToday("ok"); w.streak++;
+    if(w.status==="new"){ w.level=1; }            // знакомство пройдено → через 1 день
+    else w.level++;
+    if(w.hard && w.streak>=2) w.hard=false;        // 2 раза подряд верно — больше не трудное
+    if(w.level>=INTERVALS.length){ w.status="done"; w.level=INTERVALS.length; w.due=today0()+14*DAY; }
+    else { w.status="learn"; w.due=today0()+INTERVALS[w.level]*DAY; }
+  } else if(r==="doubt"){
+    w.streak=0; w.status="learn"; w.level=Math.max(1,Math.min(w.level,1));
+    w.due=today0()+1*DAY;                            // сомневаюсь → завтра
+  } else {
+    logToday("bad"); w.streak=0; w.mistakes++; w.hard=true; w.status="learn"; w.level=0;
+    w.due=today0();                                  // ошибка → вернуть сегодня же
+  }
+  save();
+}
+
+/* ================== ПОВТОРИТЬ ================== */
+document.querySelectorAll("#reviewModes .chip").forEach(c=>c.onclick=()=>{
+  reviewMode=c.dataset.m; document.querySelectorAll("#reviewModes .chip").forEach(x=>x.classList.toggle("active",x===c)); startReview();
+});
+function startReview(){
+  const box=document.getElementById("reviewBox");
+  if(reviewMode==="context"){ reviewState={ctxCount:0,ctxRight:0}; return renderContextLoop(); }
+  const list = reviewMode==="hard" ? db.words.filter(w=>w.hard) : dueWords();
+  reviewState={queue:shuffle(list),i:0,ok:0,bad:0,retry:[]};
+  renderReview();
+}
+function renderReview(){
+  const box=document.getElementById("reviewBox"), s=reviewState;
+  if(!s.queue.length && s.i===0){
+    box.innerHTML = reviewMode==="hard"
+      ? `<div class="empty"><div class="big">🎉</div>Трудных слов нет — отлично!</div>`
+      : `<div class="empty"><div class="big">☕</div>На сегодня повторять нечего.<br>Выучи новые слова или потренируйся в контексте.<div class="row" style="justify-content:center;margin-top:14px"><button class="btn" onclick="showTab('learn')">Учить новые</button><button class="btn ghost" onclick="document.querySelector('[data-m=context]').click()">🧩 Контекст</button></div></div>`;
+    return;
+  }
+  if(s.i>=s.queue.length){
+    // слова с ошибкой возвращаются в конце этого же занятия
+    if(s.retry.length){ s.queue=s.queue.concat(shuffle(s.retry)); s.retry=[]; return renderReview(); }
+    box.innerHTML=`<div class="empty"><div class="big">🏁</div>Повторение окончено!<br>Верно: <b style="color:var(--ok)">${s.ok}</b> · Ошибок: <b style="color:var(--bad)">${s.bad}</b>
+      <div class="row" style="justify-content:center;margin-top:14px"><button class="btn" onclick="document.querySelector('[data-m=context]').click()">🧩 Закрепить в контексте</button><button class="btn ghost" onclick="showTab('progress')">Мой прогресс</button></div></div>`;
+    return;
+  }
+  if(s.ctxPending){ s.ctxPending=false; return renderContext(box,()=>renderReview(),true); }
+  const w=s.queue[s.i];
+  const head = reviewMode==="hard"?"🔥 Трудное слово":"🔁 Повторение";
+  box.innerHTML=recallCard(w,`${head} · ${s.i+1}/${s.queue.length} · этап ${Math.min(w.level+1,4)}/4`)+
+    `<div id="resBtns" style="display:none"><div class="results">
+      <button class="btn ok" onclick="reviewAnswer('ok')">✅ Знаю</button>
+      <button class="btn warn" onclick="reviewAnswer('doubt')">🤔 Сомневаюсь</button>
+      <button class="btn bad" onclick="reviewAnswer('bad')">❌ Ошибка</button></div></div>`;
+}
+function reviewAnswer(r){
+  const s=reviewState, w=s.queue[s.i];
+  grade(w,r);
+  if(r==="ok") s.ok++; if(r==="bad"){ s.bad++; if(!s.queue.slice(s.i+1).includes(w)) s.retry.push(w); }
+  s.i++;
+  if(s.i%3===0 && db.words.length>=3) s.ctxPending=true;
+  renderReview();
+}
+
+/* ================== КОНТЕКСТ ================== */
+function stemOf(word){ const w=norm(word); return w.slice(0,Math.max(4,w.length-5)); }
+function blankSentence(w){
+  if(!w.example) return null;
+  const st=stemOf(w.word), words=w.example.split(/(\s+)/);
+  let found=false;
+  const out=words.map(t=>{
+    const clean=norm(t.replace(/[.,!?;:«»"()—-]/g,""));
+    if(!found && clean.startsWith(st)){ found=true; const p=t.match(/[.,!?;:»")]+$/); return "___"+(p?p[0]:""); }
+    return t;
+  }).join("");
+  return found?out:null;
+}
+function makeTask(){
+  const pool=db.words.filter(w=>blankSentence(w));
+  if(pool.length<1 || db.words.length<3) return null;
+  // приоритет: трудные и изучаемые слова
+  const pri=pool.filter(w=>w.hard||w.status==="learn");
+  const w=shuffle(pri.length&&Math.random()<.7?pri:pool)[0];
+  const bs=norm(blankSentence(w));
+  const cand=db.words.filter(x=>x.id!==w.id && norm(blankSentence(x)||"")!==bs);
+  const diffTopic=cand.filter(x=>!w.topic||norm(x.topic)!==norm(w.topic));
+  const others=shuffle(diffTopic.length>=2?diffTopic:cand).slice(0,2);
+  return {target:w,sentence:blankSentence(w),answer:w.word,options:shuffle([w.word,...others.map(o=>o.word)]),explain:`«${w.word}» — ${w.meaning}.`};
+}
+function renderContext(box,next,inline){
+  const t=makeTask();
+  if(!t){ return next(); }
+  showTask(box,t,next,inline);
+}
+function showTask(box,t,next,inline){
+  const parts=esc(t.sentence).split("___");
+  box.innerHTML=`<div class="center step">🧩 Контекстное задание${inline?" · закрепление":""}</div>
+    <div class="sentence">${parts[0]}<span class="gap" id="gap">&nbsp;?&nbsp;</span>${parts[1]||""}</div>
+    <div class="center small" style="margin-bottom:10px">Выбери слово, которое подходит по смыслу</div>
+    <div class="opts">${t.options.map(o=>`<button class="opt" data-o="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+    <div class="msg" id="ctxMsg"></div>
+    <div class="center" style="margin-top:10px"><button class="btn ghost" onclick="speak(this.dataset.t)" data-t="${esc(t.sentence.replace('___',t.answer))}" id="ctxSay" style="display:none">🔊 Послушать предложение</button></div>
+    <div class="center" id="ctxNext" style="display:none;margin-top:12px"><button class="btn">Дальше →</button></div>`;
+  box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    if(box.dataset.answered==="1") return; box.dataset.answered="1";
+    const right=b.dataset.o===t.answer;
+    box.querySelectorAll(".opt").forEach(x=>{ if(x.dataset.o===t.answer) x.classList.add("right"); });
+    if(!right){ b.classList.add("wrong"); const tw=t.target||db.words.find(w=>w.word===t.answer); if(tw){ tw.hard=true; tw.mistakes++; tw.due=Math.min(tw.due,today0()+DAY); save(); } }
+    document.getElementById("gap").textContent=t.answer;
+    if(db.autoSpeak) speak(t.sentence.replace("___",t.answer));
+    logToday("ctx"); save();
+    if(reviewState && reviewMode==="context" && !inline){ reviewState.ctxCount++; if(right) reviewState.ctxRight++; }
+    msg("ctxMsg",(right?"✅ Верно! ":"❌ Не совсем. Правильный ответ — «"+esc(t.answer)+"». ")+esc(t.explain),right?"good":"err");
+    document.getElementById("ctxMsg").classList.add("show");
+    document.getElementById("ctxSay").style.display="";
+    const n=document.getElementById("ctxNext"); n.style.display=""; n.querySelector("button").onclick=()=>{ box.dataset.answered="0"; next(); };
+  });
+}
+function renderContextLoop(){
+  const box=document.getElementById("reviewBox"), s=reviewState;
+  if(db.words.length<3){ box.innerHTML=`<div class="empty"><div class="big">🧩</div>Для контекстных заданий нужно хотя бы 3 слова с примерами.</div>`; return; }
+  const wrap=document.createElement("div");
+  box.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:6px"><div class="small">Решено: ${s.ctxCount} · верно: ${s.ctxRight}</div>
+    <button class="btn ai" id="aiCtx" style="padding:8px 14px">✨ Новое предложение от ИИ</button></div>`;
+  box.appendChild(wrap);
+  document.getElementById("aiCtx").onclick=()=>aiContext(wrap);
+  renderContext(wrap,renderContextLoop,false);
+}
+async function aiContext(wrap){
+  const b=document.getElementById("aiCtx"); b.disabled=true; b.innerHTML='<span class="spin"></span> Придумываю...';
+  try{
+    const pool=shuffle(db.words.filter(w=>w.status!=="done")).concat(shuffle(db.words));
+    const w=pool[0]; const others=shuffle(db.words.filter(x=>x.id!==w.id)).slice(0,2).map(o=>o.word);
+    const d=await askAI(`Придумай новое короткое предложение (6–10 слов) для ученика 6 класса со словом "${w.word}" (значение: ${w.meaning}). Слово можно поставить в нужную форму. Верни JSON: {"sentence":"предложение, где это слово заменено на ___","answer":"слово в той форме, в какой оно стоит в предложении","explain":"одно предложение: почему подходит именно это слово"}`);
+    if(!d.sentence||!d.sentence.includes("___")) throw new Error("ИИ вернул неудачное задание, попробуй ещё раз.");
+    const ans=(d.answer||w.word).toLowerCase();
+    const t={target:w,sentence:d.sentence,answer:ans,options:shuffle([ans,...others]),explain:d.explain||`«${w.word}» — ${w.meaning}.`};
+    showTask(wrap,t,renderContextLoop,false);
+  }catch(e){ alertBox(wrap,e.message); }
+  b.disabled=false; b.innerHTML="✨ Новое предложение от ИИ";
+}
+function alertBox(el,t){ el.insertAdjacentHTML("afterbegin",`<div class="msg show err">${esc(t)}</div>`); }
+
+/* ================== ОЗВУЧКА ================== */
+let cur=null, ruVoice=null;
+function pickVoice(){
+  if(!window.speechSynthesis) return;
+  const vs=speechSynthesis.getVoices().filter(v=>/^ru/i.test(v.lang));
+  ruVoice=vs.find(v=>/google|microsoft|milena|natural|online/i.test(v.name))||vs[0]||null;
+}
+if(window.speechSynthesis){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+function speak(text){
+  if(!window.speechSynthesis||!text) return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(String(text).replace(/[«»]/g,""));
+  u.lang="ru-RU"; if(ruVoice) u.voice=ruVoice; u.rate=db.rate||0.9;
+  speechSynthesis.speak(u);
+}
+function speakFull(w){ if(w) speak(w.word+". "+w.meaning+". "+(w.example||"")); }
+function autoSay(t){ if(db.autoSpeak) setTimeout(()=>speak(t),250); }
+function toggleAuto(){ db.autoSpeak=!db.autoSpeak; save(); paintAuto(); if(db.autoSpeak) speak("Озвучка включена"); else speechSynthesis&&speechSynthesis.cancel(); }
+function paintAuto(){ const b=document.getElementById("autoBtn"); b.textContent=db.autoSpeak?"🔊 Авто":"🔇 Авто"; b.style.opacity=db.autoSpeak?1:.6; }
+
+/* ================== ПРОГРЕСС ================== */
+function renderProgress(){
+  const W=db.words, total=W.length, due=dueWords().length, hard=W.filter(w=>w.hard).length, done=W.filter(w=>w.status==="done").length;
+  document.getElementById("stats").innerHTML=`
+    <div class="stat s1"><div class="n">${total}</div><div class="l">Всего слов</div></div>
+    <div class="stat s2"><div class="n">${due}</div><div class="l">На повторение сегодня</div></div>
+    <div class="stat s3"><div class="n">${hard}</div><div class="l">Трудные слова</div></div>
+    <div class="stat s4"><div class="n">${done}</div><div class="l">Освоенные слова</div></div>`;
+  const rows=[["Новые",W.filter(w=>w.status==="new").length],
+    ["Через 1 день",W.filter(w=>w.status==="learn"&&w.level<=1).length],
+    ["Через 3 дня",W.filter(w=>w.status==="learn"&&w.level===2).length],
+    ["Через 7 дней",W.filter(w=>w.status==="learn"&&w.level===3).length],
+    ["Освоено",done]];
+  document.getElementById("levels").innerHTML=rows.map(([l,n])=>`<div class="lv"><div>${l}</div><div class="bar"><i style="width:${total?n/total*100:0}%"></i></div><div>${n}</div></div>`).join("");
+  const d=db.log[new Date().toISOString().slice(0,10)]||{reviewed:0,ok:0,bad:0,ctx:0};
+  document.getElementById("today").innerHTML=`<div class="row" style="gap:18px;font-weight:800">
+    <div>🃏 Карточек: ${d.reviewed}</div><div style="color:var(--ok)">✅ Знаю: ${d.ok}</div><div style="color:var(--bad)">❌ Ошибок: ${d.bad}</div><div>🧩 Контекст: ${d.ctx}</div></div>
+    <div class="small" style="margin-top:8px">Освоено ${total?Math.round(done/total*100):0}% словаря</div><div class="bar"><i style="width:${total?done/total*100:0}%"></i></div>`;
+}
+function resetDemo(){
+  if(!confirm("Удалить все свои слова и прогресс и вернуть демо-набор?")) return;
+  const key=db.key, model=db.model;
+  db={words:DEMO.map(d=>mkWord(...d)),key,model,log:{},demoVer:2,autoSpeak:db.autoSpeak}; save(); renderProgress();
+}
+
+/* ================== НАСТРОЙКИ ИИ ================== */
+function openSettings(){ document.getElementById("apiKey").value=db.key||""; document.getElementById("apiModel").value=db.model||"llama-3.3-70b-versatile"; document.getElementById("rate").value=String(db.rate||0.9); document.getElementById("settings").classList.add("show"); }
+function closeSettings(){ document.getElementById("settings").classList.remove("show"); }
+function saveSettings(){ db.rate=+document.getElementById("rate").value; db.key=val("apiKey"); db.model=document.getElementById("apiModel").value; save(); msg("setMsg","Сохранено ✅","good"); }
+async function testAI(){
+  saveSettings();
+  msg("setMsg",'<span class="spin" style="border-top-color:var(--brand);border-color:var(--line)"></span> Проверяю...',"info");
+  try{ const d=await askAI('Верни JSON {"ok":"привет"}'); msg("setMsg","ИИ работает ✅ Ответ: "+esc(d.ok||JSON.stringify(d)),"good"); }
+  catch(e){ msg("setMsg",esc(e.message),"err"); }
+}
+document.getElementById("settings").onclick=e=>{ if(e.target.id==="settings") closeSettings(); };
+
+renderList(); updateBadge(); paintAuto();
+</script>
+</body>
+</html>
